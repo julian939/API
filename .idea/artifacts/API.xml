@@ -1,0 +1,11 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="API">
+    <output-path>$PROJECT_DIR$/artifacts</output-path>
+    <root id="archive" name="API.jar">
+      <element id="module-output" name="API" />
+      <element id="library" level="project" name="spigot-1.8.8-R0.1-SNAPSHOT-latest" />
+      <element id="file-copy" path="$PROJECT_DIR$/config.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/plugin.yml" />
+    </root>
+  </artifact>
+</component>
