@@ -15,7 +15,7 @@ public class UserCBan {
     }
 
     private User user = API.getAPI.getUser(User.getUUIDByID(user_id));
-    private MySQL mySQL = API.getAPI.mySQLCBanUtils.mySQL;
+    private MySQL mySQL = API.getAPI.mySQLBanUtils.mySQL;
 
     public boolean isBanned() {
         if(user.isRegistered()) {
@@ -37,7 +37,7 @@ public class UserCBan {
                         "('" + user_id + "','" + reason + "','" + staff_id + "','" + time + "','" + end + "')");
 
                 //BanHistory
-                ResultSet resultSet = mySQL.getResult("SELECT * FROM bans WHERE user_id='" + user_id + "'");
+                ResultSet resultSet = mySQL.getResult("SELECT * FROM cbans WHERE user_id='" + user_id + "'");
                 try {
                     if(resultSet.next())
                         mySQL.update("INSERT INTO history(uuid, reason, end, time, staff_uuid) VALUES " +
@@ -51,6 +51,70 @@ public class UserCBan {
                 }
             }
         }
+    }
+
+    public void unban() {
+        if(user.isRegistered()) {
+            if(isBanned()) {
+                mySQL.update("DELETE FROM cbans WHERE user_id='" + user_id + "'");
+            }
+        }
+    }
+
+    public String getReason() {
+        if(isBanned()) {
+            ResultSet resultSet = mySQL.getResult("SELECT reason FROM cbans WHERE user_id='" + user_id + "'");
+            try {
+                if(resultSet.next()) {
+                    return resultSet.getString("reason");
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    public long getEnd() {
+        if(isBanned()) {
+            ResultSet resultSet = mySQL.getResult("SELECT end FROM cbans WHERE user_id='" + user_id + "'");
+            try {
+                if(resultSet.next()) {
+                    return resultSet.getLong("end");
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+    public long getTime() {
+        if(isBanned()) {
+            ResultSet resultSet = mySQL.getResult("SELECT time FROM cbans WHERE user_id='" + user_id + "'");
+            try {
+                if(resultSet.next()) {
+                    return resultSet.getLong("time");
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+    public String getStaffName() {
+        if(isBanned()) {
+            ResultSet resultSet = mySQL.getResult("SELECT staff_id FROM cbans WHERE user_id='" + user_id + "'");
+            try {
+                if(resultSet.next()) {
+                    return API.getAPI.getUser(User.getUUIDByID(resultSet.getInt("staff_id"))).getName();
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        return null;
     }
 
 }

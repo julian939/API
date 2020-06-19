@@ -19,6 +19,7 @@ public class MySQLBanUtils {
 
     private void createTables() {
         mySQL.update("CREATE TABLE IF NOT EXISTS bans(user_id INT, reason_id INT, staff_id INT, end BIGINT)");
+        mySQL.update("CREATE TABLE IF NOT EXISTS cbans(user_id INT, reason VARCHAR(100), staff_id INT, time BIGINT, end BIGINT)");
         mySQL.update("CREATE TABLE IF NOT EXISTS reasons(id INT, reason VARCHAR(100), time BIGINT)");
         mySQL.update("CREATE TABLE IF NOT EXISTS history(uuid VARCHAR(100)," +
                 " reason VARCHAR(100), end BIGINT, time BIGINT, staff_uuid VARCHAR(100))");

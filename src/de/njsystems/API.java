@@ -15,6 +15,8 @@ import java.io.IOException;
 
 public class API extends JavaPlugin {
 
+    //Weitermachen ab User.grouß
+
     public static API getAPI;
 
     public FileConfiguration configcfg;
@@ -30,7 +32,6 @@ public class API extends JavaPlugin {
     public MySQLGroupUtils mySQLGroupUtils;
     public MySQLClanUtils mySQLClanUtils;
     public MySQLStatsUtils mySQLStatsUtils;
-    public MySQLCBanUtils mySQLCBanUtils;
 
     @Override
     public void onEnable() {
@@ -63,7 +64,6 @@ public class API extends JavaPlugin {
         mySQLGroupUtils = new MySQLGroupUtils();
         mySQLClanUtils = new MySQLClanUtils();
         mySQLStatsUtils = new MySQLStatsUtils();
-        mySQLCBanUtils = new MySQLCBanUtils();
 
         registerEvents(Bukkit.getPluginManager());
 
@@ -84,7 +84,6 @@ public class API extends JavaPlugin {
         mySQLPermUtils.close();
         mySQLUserUtils.close();
         mySQLStatsUtils.close();
-        mySQLCBanUtils.close();
 
         Bukkit.getConsoleSender().sendMessage(getMySQLDataUtils().getStringValue("api", "prefix") + " §cdas System wurde gestoppt!");
 

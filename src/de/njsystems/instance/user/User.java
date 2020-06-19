@@ -11,10 +11,13 @@ public class User {
     //instances
     public UserPermissions permissions = new UserPermissions(getID());
     public UserBan userBan = new UserBan(getID());
+    public UserCBan userCBan = new UserCBan(getID());
     public UserMeta userMeta = new UserMeta(getID());
     public UserGroup userGroup = new UserGroup(getID());
     public UserClan userClan = new UserClan(getID());
     public UserExtras userExtras = new UserExtras(getID());
+    public UserMute userMute = new UserMute(getID());
+    public UserCMute userCMute = new UserCMute(getID());
 
     private MySQL mySQL = API.getAPI.mySQLUserUtils.mySQL;
 
