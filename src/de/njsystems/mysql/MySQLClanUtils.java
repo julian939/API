@@ -18,7 +18,7 @@ public class MySQLClanUtils {
     }
 
     private void createTables() {
-        mySQL.update("CREATE TABLE IF NOT EXISTS clans(id INT AUTO_INCREMENT, name VARCHAR(100), tag VARCHAR(100), PRIMARY KEY (id))");
+        mySQL.update("CREATE TABLE IF NOT EXISTS clans(id INT AUTO_INCREMENT, name VARCHAR(100), tag VARCHAR(100), points BIGINT, PRIMARY KEY (id))");
         mySQL.update("CREATE TABLE IF NOT EXISTS user_clan(user_id INT, clan_id INT, rank VARCHAR(100))");
     }
 

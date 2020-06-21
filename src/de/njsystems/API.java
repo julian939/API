@@ -1,6 +1,7 @@
 package de.njsystems;
 
 import de.njsystems.instance.ban.BanReason;
+import de.njsystems.instance.group.Group;
 import de.njsystems.instance.user.User;
 import de.njsystems.listener.ConnectionListener;
 import de.njsystems.mysql.*;
@@ -104,6 +105,10 @@ public class API extends JavaPlugin {
 
     public BanReason getBanReasons() {
         return new BanReason();
+    }
+
+    public Group getGroup(String groupname) {
+        return new Group(groupname);
     }
 
 }
