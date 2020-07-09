@@ -20,8 +20,10 @@ public class UserBan {
     public boolean isBanned() {
         if(user.isRegistered()) {
             ResultSet resultSet = mySQL.getResult("SELECT * FROM bans WHERE user_id='" + user_id + "'");
+            ResultSet resultSet1 = mySQL.getResult("SELECT * FROM cbans WHERE user_id='" + user_id + "'");
             try {
-                return resultSet.next();
+                if(resultSet.next() && resultSet1.next())
+                    return true;
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -37,14 +39,27 @@ public class UserBan {
                         "('" + user_id + "','" + reason_id + "','" + staff_id + "','" + end + "')");
 
                 //BanHistory
-                ResultSet resultSet = mySQL.getResult("SELECT * FROM bans WHERE user_id='" + user_id + "'");
+                API.getAPI.getBanHistory().addBan(user_id, reason_id, end, staff_id);
+            }
+        }
+    }
+
+    public void customBan(String reason, int staff_id, long time, long end) {
+        if(user.isRegistered()) {
+            if(!isBanned()) {
+                //Inserts for bans
+                mySQL.update("INSERT INTO cbans(user_id, reason, staff_id, time, end) VALUES " +
+                        "('" + user_id + "','" + reason + "','" + staff_id + "','" + time + "','" + end + "')");
+
+                //BanHistory
+                ResultSet resultSet = mySQL.getResult("SELECT * FROM cbans WHERE user_id='" + user_id + "'");
                 try {
                     if(resultSet.next())
                         mySQL.update("INSERT INTO history(uuid, reason, end, time, staff_uuid) VALUES " +
                                 "('" + User.getUUIDByID(user_id) + "'," +
-                                "'" + API.getAPI.getBanReasons().getReason(reason_id) + "'," +
+                                "'" + reason + "'," +
                                 "'" + end + "'," +
-                                "'" + API.getAPI.getBanReasons().getTimeByID(reason_id) + "'," +
+                                "'" + time + "'," +
                                 "'" + User.getUUIDByID(staff_id) + "')");
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
@@ -54,17 +69,17 @@ public class UserBan {
     }
 
 
-    public void unban() {
+    public void unban(String type) {
         if(user.isRegistered()) {
             if(isBanned()) {
-                mySQL.update("DELETE FROM bans WHERE user_id='" + user_id + "'");
+                mySQL.update("DELETE FROM " + type + " WHERE user_id='" + user_id + "'");
             }
         }
     }
 
-    public String getReason() {
+    public String getReason(String type) {
         if(isBanned()) {
-            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM bans WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return API.getAPI.getBanReasons().getReason(resultSet.getInt("reason_id"));
@@ -76,9 +91,9 @@ public class UserBan {
         return null;
     }
 
-    public long getEnd() {
+    public long getEnd(String type) {
         if(isBanned()) {
-            ResultSet resultSet = mySQL.getResult("SELECT end FROM bans WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT end FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return resultSet.getLong("end");
@@ -90,9 +105,9 @@ public class UserBan {
         return -1;
     }
 
-    public long getTime() {
+    public long getTime(String type) {
         if(isBanned()) {
-            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM bans WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return API.getAPI.getBanReasons().getTimeByID(resultSet.getInt("reason_id"));
@@ -104,9 +119,9 @@ public class UserBan {
         return -1;
     }
 
-    public String getStaffName() {
+    public String getStaffName(String type) {
         if(isBanned()) {
-            ResultSet resultSet = mySQL.getResult("SELECT staff_id FROM bans WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT staff_id FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return API.getAPI.getUser(User.getUUIDByID(resultSet.getInt("staff_id"))).getName();

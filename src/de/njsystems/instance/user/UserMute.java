@@ -20,8 +20,10 @@ public class UserMute {
     public boolean isMuted() {
         if(user.isRegistered()) {
             ResultSet resultSet = mySQL.getResult("SELECT * FROM mutes WHERE user_id='" + user_id + "'");
+            ResultSet resultSet1 = mySQL.getResult("SELECT * FROM cmutes WHERE user_id='" + user_id + "'");
             try {
-                resultSet.next();
+                if(resultSet.next() && resultSet1.next())
+                    return true;
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
@@ -37,14 +39,27 @@ public class UserMute {
                         "('" + user_id + "','" + reason_id + "','" + staff_id + "','" + end + "')");
 
                 //BanHistory
-                ResultSet resultSet = mySQL.getResult("SELECT * FROM bans WHERE user_id='" + user_id + "'");
+
+            }
+        }
+    }
+
+    public void customMute(String reason, int staff_id, long time, long end) {
+        if(user.isRegistered()) {
+            if(!isMuted()) {
+                //Inserts for bans
+                mySQL.update("INSERT INTO cmutes(user_id, reason, staff_id, time, end) VALUES " +
+                        "('" + user_id + "','" + reason + "','" + staff_id + "','" + time + "','" + end + "')");
+
+                //BanHistory
+                ResultSet resultSet = mySQL.getResult("SELECT * FROM cmutes WHERE user_id='" + user_id + "'");
                 try {
                     if(resultSet.next())
                         mySQL.update("INSERT INTO history(uuid, reason, end, time, staff_uuid) VALUES " +
                                 "('" + User.getUUIDByID(user_id) + "'," +
-                                "'" + API.getAPI.getBanReasons().getReason(reason_id) + "'," +
+                                "'" + reason + "'," +
                                 "'" + end + "'," +
-                                "'" + API.getAPI.getBanReasons().getTimeByID(reason_id) + "'," +
+                                "'" + time + "'," +
                                 "'" + User.getUUIDByID(staff_id) + "')");
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
@@ -53,17 +68,17 @@ public class UserMute {
         }
     }
 
-    public void unban() {
+    public void unmute(String type) {
         if(user.isRegistered()) {
             if(isMuted()) {
-                mySQL.update("DELETE FROM mutes WHERE user_id='" + user_id + "'");
+                mySQL.update("DELETE FROM " + type + " WHERE user_id='" + user_id + "'");
             }
         }
     }
 
-    public String getReason() {
+    public String getReason(String type) {
         if(isMuted()) {
-            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM mutes WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return API.getAPI.getBanReasons().getReason(resultSet.getInt("reason_id"));
@@ -75,9 +90,9 @@ public class UserMute {
         return null;
     }
 
-    public long getEnd() {
+    public long getEnd(String type) {
         if(isMuted()) {
-            ResultSet resultSet = mySQL.getResult("SELECT end FROM mutes WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT end FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return resultSet.getLong("end");
@@ -89,9 +104,9 @@ public class UserMute {
         return -1;
     }
 
-    public long getTime() {
+    public long getTime(String type) {
         if(isMuted()) {
-            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM mutes WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT reason_id FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return API.getAPI.getBanReasons().getTimeByID(resultSet.getInt("reason_id"));
@@ -103,9 +118,9 @@ public class UserMute {
         return -1;
     }
 
-    public String getStaffName() {
+    public String getStaffName(String type) {
         if(isMuted()) {
-            ResultSet resultSet = mySQL.getResult("SELECT staff_id FROM mutes WHERE user_id='" + user_id + "'");
+            ResultSet resultSet = mySQL.getResult("SELECT staff_id FROM " + type + " WHERE user_id='" + user_id + "'");
             try {
                 if(resultSet.next()) {
                     return API.getAPI.getUser(User.getUUIDByID(resultSet.getInt("staff_id"))).getName();

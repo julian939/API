@@ -1,7 +1,12 @@
 package de.njsystems;
 
+import com.gtranslate.Translator;
+import de.njsystems.instance.ban.BanHistory;
 import de.njsystems.instance.ban.BanReason;
+import de.njsystems.instance.clan.Clan;
 import de.njsystems.instance.group.Group;
+import de.njsystems.instance.mute.MuteHistory;
+import de.njsystems.instance.stats.Stats;
 import de.njsystems.instance.user.User;
 import de.njsystems.listener.ConnectionListener;
 import de.njsystems.mysql.*;
@@ -15,8 +20,6 @@ import java.io.File;
 import java.io.IOException;
 
 public class API extends JavaPlugin {
-
-    //Weitermachen ab User.grouß
 
     public static API getAPI;
 
@@ -111,4 +114,19 @@ public class API extends JavaPlugin {
         return new Group(groupname);
     }
 
+    public Clan getClan(String clanname) {
+        return new Clan(clanname);
+    }
+
+    public Stats getStats(int user_id) {
+        return new Stats(user_id);
+    }
+
+    public BanHistory getBanHistory(int user_id) {
+        return new BanHistory(user_id);
+    }
+
+    public MuteHistory getMuteHistory(int user_id) {
+        return new MuteHistory(user_id);
+    }
 }
